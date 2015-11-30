@@ -19,12 +19,12 @@ node {
 }
 
 stage name: 'QA', concurrency: 1
-input message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Re-configure the environment?', id: 'configure']]
+input message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Re-configure the environment?', id: 'reconf']]
 checkpoint('Before QA')
 parallel(deploy: {
     node {
-        if (configure == true) {
-          configure(hostname: 'qa1.internal', type: 'QA', credentials: 'team-a-deploy')
+        if (reconf == true) {
+          configure hostname: 'qa1.internal', type: 'QA', credentials: 'team-a-deploy'
         }
         deploy hostname: 'team.a.qa.internal', type: 'QA1', credentials: 'team-a-deploy', component: 'user-service'
         selenium hostanme: 'qa.internal', type: 'QA', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
