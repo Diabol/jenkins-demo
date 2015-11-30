@@ -10,8 +10,8 @@ node('master') {
 stage name: "Integrations Test", concurrency: 1
 node {
     parallel(ci: {
-        deploy(hostname: 'team.a.ci.internal', type: 'CI', credentials: 'team-a-deploy', component: 'user-service')
-        selenium(hostanme: 'ci.internal', type: 'CI', executors: 1, root: 'test/selenium', include: 'FeatureTest.*', exclude: '')
+        deploy hostname: 'team.a.ci.internal', type: 'CI', credentials: 'team-a-deploy', component: 'user-service'
+        selenium hostanme: 'ci.internal', type: 'CI', executors: 1, root: 'test/selenium', include: 'FeatureTest.*', exclude: ''
      }, sonar: {
         sh "echo 'Running static code analysis with sonar...'"
         sh "sleep 5"
@@ -26,8 +26,8 @@ parallel(deploy: {
         if (configure == true) {
           configure(hostname: 'qa1.internal', type: 'QA', credentials: 'team-a-deploy')
         }
-        deploy(hostname: 'team.a.qa.internal', type: 'QA1', credentials: 'team-a-deploy', component: 'user-service')
-        selenium(hostanme: 'qa.internal', type: 'QA', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: '')
+        deploy hostname: 'team.a.qa.internal', type: 'QA1', credentials: 'team-a-deploy', component: 'user-service'
+        selenium hostanme: 'qa.internal', type: 'QA', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
     }
 }, releaseNotes: {
    node {
@@ -39,10 +39,10 @@ stage name: 'STAGE', concurrency: 1
 input message: 'Deploy to STAGE?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Run performance tests?', id: 'performance']]
 checkpoint('Before STAGE')
 node {
-     deploy(hostname: 'team.a.stage.internal', type: 'STAGE', credentials: 'team-a-deploy', component: 'user-service')
-     selenium(hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: '')
+     deploy hostname: 'team.a.stage.internal', type: 'STAGE', credentials: 'team-a-deploy', component: 'user-service'
+     selenium hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
      if (performance == true) {
-       selenium(hostanme: 'stage.internal', type: 'STAGE', executors: 100, root: 'test/selenium', include: 'PerformanceTest.*', exclude: '')
+       selenium hostanme: 'stage.internal', type: 'STAGE', executors: 100, root: 'test/selenium', include: 'PerformanceTest.*', exclude: ''
      }
 }
 
@@ -50,21 +50,21 @@ stage name: 'PROD', concurrency: 1
 input message: 'Deploy to PROD?', submitter: 'andreas'
 checkpoint('Before PROD')
 node('restricted-slave') {
-     deploy(hostname: 'team.a.prod.external', type: 'PROD', credentials: 'team-a-deploy', component: 'user-service')
-     selenium(hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: '')
+     deploy hostname: 'team.a.prod.external', type: 'PROD', credentials: 'team-a-deploy', component: 'user-service'
+     selenium hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
 }
 
-def configure(hostname,type,credentials) {
-  echo "Configuring $type environment on $hostname with redentials $credentials"
+def configure(params) {
+  echo "Configuring $params.type environment on $params.hostname with redentials $params.credentials"
   sh "sleep 5"
 }
 
-def deploy(hostname,type,credentials,component) {
- echo "Deploying to $component to $type($hostname) with credentials $credentials"
+def deploy(params) {
+ echo "Deploying to $params.component to $params.type($params.hostname) with credentials $params.credentials"
  sh "sleep 5"
 }
 
-def selenium(hostname, type, executors, root, include, exclude) {
- echo "Running $include selenium tests on $executors executors towards $type($hsotname)from $root"
+def selenium(params) {
+ echo "Running $params.include selenium tests on $params.executors executors towards $params.type($params.hostname)from $params.root"
  sh "sleep 5"
 }
