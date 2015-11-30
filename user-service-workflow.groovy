@@ -10,8 +10,8 @@ node('master') {
 stage name: "Integrations Test", concurrency: 1
 node {
     parallel(ci: {
-        deploy 'CI'
-        selenium 'CI'
+        deploy hostname: 'team.a.ci.internal', type: 'CI', credentials: 'team-a-deploy', component: 'user-service'
+        selenium hostanme: 'ci.internal', type: 'CI', executors: 1, root: 'test/selenium', include: 'FeatureTest.*', exclude: ''
      }, sonar: {
         sh "echo 'Running static code analysis with sonar...'"
         sh "sleep 5"
@@ -19,40 +19,52 @@ node {
 }
 
 stage name: 'QA', concurrency: 1
-input message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Re-create the environment?']]
+input message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Re-configure the environment?', id: 'configure']]
 checkpoint('Before QA')
 parallel(deploy: {
     node {
-        deploy 'QA1'
-        selenium 'QA1'
+        if (configure == true) {
+          configure hostname: 'qa1.internal' type: 'QA', credentials: 'team-a-deploy' component: 'user-service'
+        }
+        deploy hostname: 'team.a.qa.internal', type: 'QA1', credentials: 'team-a-deploy', component: 'user-service'
+        selenium hostanme: 'qa.internal', type: 'QA', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
     }
 }, releaseNotes: {
    node {
        sh "echo 'Generating Release Notes...'"
    }
 })
-input message: 'Did manual test pass? ', ok: 'Yes'
 
 stage name: 'STAGE', concurrency: 1
-input message: 'Deploy to STAGE?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Re-load production data?']]
+input message: 'Deploy to STAGE?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Run performance tests?', id: 'performance']]
 checkpoint('Before STAGE')
 node {
-     deploy 'STAGE'
+     deploy hostname: 'team.a.stage.internal', type: 'STAGE', credentials: 'team-a-deploy', component: 'user-service'
+     selenium hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
+     if (performance == true) {
+       selenium hostanme: 'stage.internal', type: 'STAGE', executors: 100, root: 'test/selenium', include: 'PerformanceTest.*', exclude: ''
+     }
 }
 
 stage name: 'PROD', concurrency: 1
 input message: 'Deploy to PROD?', submitter: 'andreas'
 checkpoint('Before PROD')
-node {
-     deploy 'PRODUCTION'
+node('restricted-slave') {
+     deploy hostname: 'team.a.prod.external', type: 'PROD', credentials: 'team-a-deploy', component: 'user-service'
+     selenium hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
 }
 
-def deploy(environment) {
- sh "echo 'Deploying to $environment'"
+def deploy(hostname,type,credentials,component) {
+  echo "Configuring $type environment on $hostname with redentials $credentials"
+  sh "sleep 5"
+}
+
+def deploy(hostname,type,credentials,component) {
+ echo "Deploying to $component to $type($hostname) with credentials $credentials"
  sh "sleep 5"
 }
 
-def selenium(environment) {
- sh "echo 'Running tests on $environment'"
+def selenium(hostname, type, executors, root, include, exclude) {
+ echo "Running $include selenium tests on $executors executors towards $type($hsotname)from $root"
  sh "sleep 5"
 }
