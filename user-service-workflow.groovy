@@ -19,11 +19,11 @@ node {
 }
 
 stage name: 'QA', concurrency: 1
-qatrigger = input message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'reConfigure']]
+reconfigure = input message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'reconf', description: 'Re-confgiure the environment?']]
 checkpoint('Before QA')
 parallel(deploy: {
     node {
-        if (qatrigger.reConfigure == true) {
+        if (reconfigure == true) {
           configure hostname: 'qa1.internal', type: 'QA', credentials: 'team-a-deploy'
         }
         deploy hostname: 'team.a.qa.internal', type: 'QA1', credentials: 'team-a-deploy', component: 'user-service'
