@@ -24,7 +24,7 @@ checkpoint('Before QA')
 parallel(deploy: {
     node {
         if (configure == true) {
-          configure hostname: 'qa1.internal' type: 'QA', credentials: 'team-a-deploy' component: 'user-service'
+          configure hostname: 'qa1.internal', type: 'QA', credentials: 'team-a-deploy'
         }
         deploy hostname: 'team.a.qa.internal', type: 'QA1', credentials: 'team-a-deploy', component: 'user-service'
         selenium hostanme: 'qa.internal', type: 'QA', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
@@ -54,7 +54,7 @@ node('restricted-slave') {
      selenium hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
 }
 
-def deploy(hostname,type,credentials,component) {
+def configure(hostname,type,credentials) {
   echo "Configuring $type environment on $hostname with redentials $credentials"
   sh "sleep 5"
 }
