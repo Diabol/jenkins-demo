@@ -11,7 +11,7 @@ stage name: "Integrations Test", concurrency: 1
 node {
     parallel(ci: {
         deploy hostname: 'team.a.ci.internal', type: 'CI', credentials: 'team-a-deploy', component: 'user-service'
-        selenium hostanme: 'ci.internal', type: 'CI', executors: 1, root: 'test/selenium', include: 'FeatureTest.*', exclude: ''
+        selenium hostname: 'ci.internal', type: 'CI', executors: 1, root: 'test/selenium', include: 'FeatureTest.*', exclude: ''
      }, sonar: {
         sh "echo 'Running static code analysis with sonar...'"
         sh "sleep 5"
@@ -19,7 +19,7 @@ node {
 }
 
 stage name: 'QA', concurrency: 1
-reconfigure = input message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'reconf', description: 'Re-confgiure the environment?']]
+reconfigure = input message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Re-configure the environment?']]
 checkpoint('Before QA')
 parallel(deploy: {
     node {
@@ -27,7 +27,7 @@ parallel(deploy: {
           configure hostname: 'qa1.internal', type: 'QA', credentials: 'team-a-deploy'
         }
         deploy hostname: 'team.a.qa.internal', type: 'QA1', credentials: 'team-a-deploy', component: 'user-service'
-        selenium hostanme: 'qa.internal', type: 'QA', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
+        selenium hostname: 'qa.internal', type: 'QA', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
     }
 }, releaseNotes: {
    node {
@@ -36,13 +36,13 @@ parallel(deploy: {
 })
 
 stage name: 'STAGE', concurrency: 1
-input message: 'Deploy to STAGE?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Run performance tests?', id: 'performance']]
+performance = input message: 'Deploy to STAGE?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Run performance tests?']]
 checkpoint('Before STAGE')
 node {
      deploy hostname: 'team.a.stage.internal', type: 'STAGE', credentials: 'team-a-deploy', component: 'user-service'
-     selenium hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
+     selenium hostname: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
      if (performance == true) {
-       selenium hostanme: 'stage.internal', type: 'STAGE', executors: 100, root: 'test/selenium', include: 'PerformanceTest.*', exclude: ''
+       selenium hostname: 'stage.internal', type: 'STAGE', executors: 100, root: 'test/selenium', include: 'PerformanceTest.*', exclude: ''
      }
 }
 
@@ -51,7 +51,7 @@ input message: 'Deploy to PROD?', submitter: 'andreas'
 checkpoint('Before PROD')
 node('restricted-slave') {
      deploy hostname: 'team.a.prod.external', type: 'PROD', credentials: 'team-a-deploy', component: 'user-service'
-     selenium hostanme: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
+     selenium hostname: 'stage.internal', type: 'STAGE', executors: 1, root: 'test/selenium', include: 'SmokeTest.*', exclude: ''
 }
 
 def configure(params) {
