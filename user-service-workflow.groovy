@@ -19,7 +19,7 @@ node {
 }
 
 stage name: 'QA', concurrency: 1
-input id: 'qatrigger' message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Re-configure the environment?']]
+input id: 'qatrigger', message: 'Deploy to QA?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: false, description: '', name: 'Re-configure the environment?']]
 checkpoint('Before QA')
 parallel(deploy: {
     node {
