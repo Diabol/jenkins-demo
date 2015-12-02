@@ -60,8 +60,11 @@ def configure(params) {
 }
 
 def deploy(params) {
- echo "Deploying to $params.component to $params.type($params.hostname) with credentials $params.credentials"
- sh "sleep 5"
+  withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: $params.credentials,
+                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+    echo "Deploying to $params.component to $params.type($params.hostname) with credentials $USERNAME"
+    sh "sleep 5"
+  }
 }
 
 def selenium(params) {
