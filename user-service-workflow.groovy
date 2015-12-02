@@ -1,5 +1,6 @@
+import se.diabol.jenkinsdemo.DiabolHelper;
 
-def helper = new se.diabol.jenkinsdemo.DiabolHelper()
+def helper = new DiabolHelper()
 
 stage 'Build'
 node('master') {
