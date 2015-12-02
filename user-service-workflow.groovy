@@ -1,7 +1,3 @@
-import se.diabol.jenkinsdemo.DiabolHelper;
-
-def helper = new DiabolHelper()
-
 stage 'Build'
 node('master') {
      git url: 'https://github.com/Diabol/jenkins-demo.git'
@@ -9,17 +5,17 @@ node('master') {
      sh "echo 'running unit tests....'"
      step([$class: 'JUnitResultArchiver', testResults: '**/surefire-reports/TEST-*.xml'])
      sh "echo 'packaging and archiving artifacts....'"
-     sh "sleep 5"
+     sh "sleep 3"
 }
 
 stage name: "Integrations Test", concurrency: 1
 node {
     parallel(ci: {
-        helper.deploy hostname: 'team.a.ci.internal', type: 'CI', credentials: 'team-a-deploy', component: 'user-service'
+        deploy hostname: 'team.a.ci.internal', type: 'CI', credentials: 'team-a-deploy', component: 'user-service'
         selenium hostname: 'ci.internal', type: 'CI', executors: 1, root: 'test/selenium', include: 'FeatureTest.*', exclude: ''
      }, sonar: {
         sh "echo 'Running static code analysis with sonar...'"
-        sh "sleep 5"
+        sh "sleep 3"
      })
 }
 
@@ -63,7 +59,7 @@ def configure(params) {
   withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: params.credentials,
                       usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
     echo "Configuring $params.type environment on $params.hostname with redentials $env.USERNAME"
-    sh "sleep 5"
+    sh "sleep 3"
   }
 }
 
@@ -71,11 +67,11 @@ def deploy(params) {
   withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: params.credentials,
                     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
     echo "Deploying to $params.component to $params.type($params.hostname) with credentials $env.USERNAME"
-    sh "sleep 5"
+    sh "sleep 3"
   }
 }
 
 def selenium(params) {
  echo "Running $params.include selenium tests on $params.executors executors towards $params.type($params.hostname)from $params.root"
- sh "sleep 5"
+ sh "sleep 3"
 }
