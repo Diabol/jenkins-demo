@@ -57,6 +57,7 @@ node('restricted-slave') {
 
 def configure(params) {
   withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: params.credentials,
+                      usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
     echo "Configuring $params.type environment on $params.hostname with redentials $env.USERNAME"
     sh "sleep 5"
   }
