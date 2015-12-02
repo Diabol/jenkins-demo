@@ -62,7 +62,7 @@ def configure(params) {
 def deploy(params) {
   withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: params.credentials,
                     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-    echo "Deploying to $params.component to $params.type($params.hostname) with credentials \$USERNAME"
+    echo "Deploying to $params.component to $params.type($params.hostname) with credentials $env.USERNAME"
     sh "sleep 5"
   }
 }
