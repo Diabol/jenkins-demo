@@ -3,6 +3,7 @@ node('master') {
      git url: 'https://github.com/Diabol/jenkins-demo.git'
      echo 'compiling project....'
      sh "echo 'running unit tests....'"
+     step([$class: 'JUnitResultArchiver', testResults: '**/surefire-reports/TEST-*.xml'])
      sh "echo 'packaging and archiving artifacts....'"
      sh "sleep 5"
 }
@@ -55,8 +56,10 @@ node('restricted-slave') {
 }
 
 def configure(params) {
-  echo "Configuring $params.type environment on $params.hostname with redentials $params.credentials"
-  sh "sleep 5"
+  withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: params.credentials,
+    echo "Configuring $params.type environment on $params.hostname with redentials $env.USERNAME"
+    sh "sleep 5"
+  }
 }
 
 def deploy(params) {
