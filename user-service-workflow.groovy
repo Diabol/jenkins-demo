@@ -3,6 +3,7 @@ node('master') {
      git url: 'https://github.com/Diabol/jenkins-demo.git'
      echo 'compiling project....'
      sh "echo 'running unit tests....'"
+     sh "touch surefire-reports/TEST*"
      step([$class: 'JUnitResultArchiver', testResults: '**/surefire-reports/TEST-*.xml'])
      sh "echo 'packaging and archiving artifacts....'"
      sh "sleep 3"
