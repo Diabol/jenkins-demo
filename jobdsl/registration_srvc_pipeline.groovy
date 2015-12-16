@@ -32,7 +32,16 @@ job('Registration/Build') {
     wrappers {
         deliveryPipelineVersion('1.0.0.\$BUILD_NUMBER', true)
     }
+
+    steps {
+        shell("""
+          test.sh
+          sleep $sleepTime
+        """)
+    }
+
     publishers {
+        archiveJunit('/test-reports/*.xml')
         downstreamParameterized {
             trigger('Registration/Sonar') {
               triggerWithNoParameters(true)
