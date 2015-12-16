@@ -128,8 +128,12 @@ job('Registration/Test1CI') {
 
 
     publishers {
-        buildPipelineTrigger('Registration/Test2CI') {
-        }
+      downstreamParameterized {
+          trigger('Registration/Test2CI') {
+            condition('SUCCESS')
+            triggerWithNoParameters(true)
+          }
+      }
     }
 }
 
@@ -147,8 +151,12 @@ job('Registration/Test2CI') {
     }
 
     publishers {
-        buildPipelineTrigger('Registration/Test3CI') {
-        }
+      downstreamParameterized {
+          trigger('Registration/Test3CI') {
+            condition('SUCCESS')
+            triggerWithNoParameters(true)
+          }
+      }
     }
 }
 
