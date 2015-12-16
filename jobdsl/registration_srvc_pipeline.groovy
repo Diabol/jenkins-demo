@@ -59,9 +59,13 @@ job('Registration/Package') {
         )
     }
 
-    trigger('Registration/DeployCI') {
-      condition('SUCCESS')
-      triggerWithNoParameters(true)
+    publishers {
+        downstreamParameterized {
+            trigger('Registration/Package') {
+              condition('SUCCESS')
+              triggerWithNoParameters(true)
+            }
+        }
     }
 }
 
