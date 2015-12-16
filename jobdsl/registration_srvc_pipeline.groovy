@@ -26,7 +26,6 @@ job('Registration/Build') {
     publishers {
         downstreamParameterized {
             trigger('Registration/Sonar') {
-                gitRevision(false)
             }
             trigger('Registration/DeployCI') {
               condition('SUCCESS')
