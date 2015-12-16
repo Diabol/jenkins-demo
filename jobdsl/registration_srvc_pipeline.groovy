@@ -23,6 +23,9 @@ job('Registration/Build') {
             }
         }
     }
+    triggers {
+        scm('* * * * *')
+    }
     wrappers {
         deliveryPipelineVersion('1.0.0.\$BUILD_NUMBER', true)
     }
