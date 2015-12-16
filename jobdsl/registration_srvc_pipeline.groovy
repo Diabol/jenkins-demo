@@ -2,7 +2,7 @@ folder('Registration')
 
 deliveryPipelineView('Registration/Pipeline') {
 
-    showAggregatedPipeline()
+    //showAggregatedPipeline()
     pipelineInstances(5)
     enableManualTriggers()
     sorting(Sorting.TITLE)
@@ -31,11 +31,37 @@ job('Registration/Build') {
             trigger('Registration/Sonar') {
               triggerWithNoParameters(true)
             }
-            trigger('Registration/DeployCI') {
+            trigger('Registration/Package') {
               condition('SUCCESS')
               triggerWithNoParameters(true)
             }
         }
+    }
+}
+
+job('Registration/Package') {
+    deliveryPipelineConfiguration("Build", "Package & archive")
+    scm {
+        git {
+            remote {
+                url('https://github.com/Diabol/dummy.git')
+            }
+        }
+    }
+
+    wrappers {
+        buildName('\$PIPELINE_VERSION')
+    }
+
+    steps {
+        shell(
+                'sleep 10'
+        )
+    }
+
+    trigger('Registration/DeployCI') {
+      condition('SUCCESS')
+      triggerWithNoParameters(true)
     }
 }
 
@@ -75,7 +101,7 @@ job('Registration/DeployCI') {
 
     publishers {
         downstreamParameterized {
-            trigger('Registration/TestCI') {
+            trigger('Registration/Test1CI') {
               condition('SUCCESS')
               triggerWithNoParameters(true)
             }
@@ -83,8 +109,8 @@ job('Registration/DeployCI') {
     }
 }
 
-job('Registration/TestCI') {
-    deliveryPipelineConfiguration("Integration", "Functional test")
+job('Registration/Test1CI') {
+    deliveryPipelineConfiguration("Integration", "Basic functional tests")
 
     wrappers {
         buildName('\$PIPELINE_VERSION')
@@ -96,6 +122,44 @@ job('Registration/TestCI') {
         )
     }
 
+
+    publishers {
+        buildPipelineTrigger('Registration/Test2CI') {
+        }
+    }
+}
+
+job('Registration/Test2CI') {
+    deliveryPipelineConfiguration("Integration", "Extended functional tests")
+
+    wrappers {
+        buildName('\$PIPELINE_VERSION')
+    }
+
+    steps {
+        shell(
+                'sleep 10'
+        )
+    }
+
+    publishers {
+        buildPipelineTrigger('Registration/Test3CI') {
+        }
+    }
+}
+
+job('Registration/Test3CI') {
+    deliveryPipelineConfiguration("Integration", "End-to-end tests")
+
+    wrappers {
+        buildName('\$PIPELINE_VERSION')
+    }
+
+    steps {
+        shell(
+                'sleep 10'
+        )
+    }
 
     publishers {
         buildPipelineTrigger('Registration/DeployQA') {
@@ -145,9 +209,7 @@ job('Registration/TestQA') {
 
 
     publishers {
-        buildPipelineTrigger('Registration/DeployProd') {
-        }
-        buildPipelineTrigger('Registration/TestPerformanceQA') {
+        buildPipelineTrigger('Registration/DeployProd, Registration/TestPerformanceQA') {
         }
     }
 }
@@ -216,6 +278,14 @@ job('Registration/TestProd') {
         )
     }
 
+    publishers {
+        downstreamParameterized {
+            trigger('Registration/PublishReleaseNotes') {
+              condition('SUCCESS')
+              triggerWithNoParameters(true)
+            }
+        }
+    }
 }
 
 job('Registration/PublishReleaseNotes') {
