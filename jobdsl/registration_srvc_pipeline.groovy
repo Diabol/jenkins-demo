@@ -26,9 +26,11 @@ job('Registration/Build') {
     publishers {
         downstreamParameterized {
             trigger('Registration/Sonar') {
+              triggerWithNoParameters(true)
             }
             trigger('Registration/DeployCI') {
               condition('SUCCESS')
+              triggerWithNoParameters(true)
             }
         }
     }
@@ -72,6 +74,7 @@ job('Registration/DeployCI') {
         downstreamParameterized {
             trigger('Registration/TestCI') {
               condition('SUCCESS')
+              triggerWithNoParameters(true)
             }
         }
     }
@@ -114,9 +117,11 @@ job('Registration/DeployQA') {
         downstreamParameterized {
             trigger('Registration/GenerateReleaseNotes') {
               condition('SUCCESS')
+              triggerWithNoParameters(true)
             }
             trigger('Registration/TestQA') {
               condition('SUCCESS')
+              triggerWithNoParameters(true)
             }
         }
     }
@@ -189,6 +194,7 @@ job('Registration/DeployProd') {
         downstreamParameterized {
             trigger('Registration/TestProd') {
               condition('SUCCESS')
+              triggerWithNoParameters(true)
             }
         }
     }
