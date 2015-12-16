@@ -28,8 +28,8 @@ job('Registration/Build') {
             trigger('Registration/Sonar') {
                 gitRevision(false)
             }
-            trigger('Registration/DeployCI', 'SUCCESS', true) {
-
+            trigger('Registration/DeployCI') {
+              condition('SUCCESS')
             }
         }
     }
@@ -71,8 +71,8 @@ job('Registration/DeployCI') {
 
     publishers {
         downstreamParameterized {
-            trigger('Registration/TestCI', 'SUCCESS', true) {
-
+            trigger('Registration/TestCI') {
+              condition('SUCCESS')
             }
         }
     }
@@ -113,10 +113,11 @@ job('Registration/DeployQA') {
 
     publishers {
         downstreamParameterized {
-            trigger('Registration/GenerateReleaseNotes', 'SUCCESS', true) {
+            trigger('Registration/GenerateReleaseNotes') {
+              condition('SUCCESS')
             }
-            trigger('Registration/TestQA', 'SUCCESS', true) {
-
+            trigger('Registration/TestQA') {
+              condition('SUCCESS')
             }
         }
     }
@@ -187,8 +188,8 @@ job('Registration/DeployProd') {
 
     publishers {
         downstreamParameterized {
-            trigger('Registration/TestProd', 'SUCCESS', true) {
-
+            trigger('Registration/TestProd') {
+              condition('SUCCESS')
             }
         }
     }
