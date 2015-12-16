@@ -35,13 +35,13 @@ job('Registration/Build') {
 
     steps {
         shell("""
-          test.sh
+          ./unitTest.sh
           sleep $sleepTime
         """)
     }
 
     publishers {
-        archiveJunit('/test-reports/*.xml')
+        archiveJunit('test-reports/*.xml')
         downstreamParameterized {
             trigger('Registration/Sonar') {
               triggerWithNoParameters(true)
