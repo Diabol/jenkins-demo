@@ -61,7 +61,7 @@ job('Registration/Package') {
 
     publishers {
         downstreamParameterized {
-            trigger('Registration/Package') {
+            trigger('Registration/DeployCI') {
               condition('SUCCESS')
               triggerWithNoParameters(true)
             }
