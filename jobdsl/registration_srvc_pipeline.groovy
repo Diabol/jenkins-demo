@@ -103,15 +103,22 @@ job('Registration/Sonar') {
 
 job('Registration/DeployCI') {
     deliveryPipelineConfiguration("Integration", "Deploy to CI")
-
+    scm {
+      git {
+          remote {
+              url(scmUrl)
+          }
+      }
+    }
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
-        shell("sleep $sleepTime")
+        shell("""
+          ./deployCI.sh
+          sleep $sleepTime
+          """)
     }
-
     publishers {
         downstreamParameterized {
             trigger('Registration/Test1CI') {
@@ -124,17 +131,24 @@ job('Registration/DeployCI') {
 
 job('Registration/Test1CI') {
     deliveryPipelineConfiguration("Integration", "Basic functional tests")
-
+    scm {
+      git {
+          remote {
+              url(scmUrl)
+          }
+      }
+    }
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
-        shell("sleep $sleepTime")
+        shell("""
+          ./integrationTest.sh
+          sleep $sleepTime
+        """)
     }
-
-
     publishers {
+      archiveJunit('test-reports/*.xml')
       downstreamParameterized {
           trigger('Registration/Test2CI') {
             condition('SUCCESS')
@@ -146,15 +160,12 @@ job('Registration/Test1CI') {
 
 job('Registration/Test2CI') {
     deliveryPipelineConfiguration("Integration", "Extended functional tests")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
-
     publishers {
       downstreamParameterized {
           trigger('Registration/Test3CI') {
@@ -167,15 +178,12 @@ job('Registration/Test2CI') {
 
 job('Registration/Test3CI') {
     deliveryPipelineConfiguration("Integration", "End-to-end tests")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
-
     publishers {
         buildPipelineTrigger('Registration/DeployQA') {
         }
@@ -184,15 +192,12 @@ job('Registration/Test3CI') {
 
 job('Registration/DeployQA') {
     deliveryPipelineConfiguration("Acceptance", "Deploy to QA")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
-
     publishers {
         downstreamParameterized {
             trigger('Registration/GenerateReleaseNotes') {
@@ -209,16 +214,12 @@ job('Registration/DeployQA') {
 
 job('Registration/TestQA') {
     deliveryPipelineConfiguration("Acceptance", "Smoke test")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
-
-
     publishers {
         buildPipelineTrigger('Registration/DeployProd, Registration/TestPerformanceQA') {
         }
@@ -227,11 +228,9 @@ job('Registration/TestQA') {
 
 job('Registration/TestPerformanceQA') {
     deliveryPipelineConfiguration("Acceptance", "Performance test")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
@@ -239,11 +238,9 @@ job('Registration/TestPerformanceQA') {
 
 job('Registration/GenerateReleaseNotes') {
     deliveryPipelineConfiguration("Acceptance", "Generate Relese Notes")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
@@ -251,15 +248,12 @@ job('Registration/GenerateReleaseNotes') {
 
 job('Registration/DeployProd') {
     deliveryPipelineConfiguration("Production", "Deploy to PROD")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
-
     publishers {
         downstreamParameterized {
             trigger('Registration/TestProd') {
@@ -272,15 +266,12 @@ job('Registration/DeployProd') {
 
 job('Registration/TestProd') {
     deliveryPipelineConfiguration("Production", "Smoke test")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
-
     publishers {
         downstreamParameterized {
             trigger('Registration/PublishReleaseNotes') {
@@ -293,11 +284,9 @@ job('Registration/TestProd') {
 
 job('Registration/PublishReleaseNotes') {
     deliveryPipelineConfiguration("Production", "Publish Relese Notes")
-
     wrappers {
         buildName('\$PIPELINE_VERSION')
     }
-
     steps {
         shell("sleep $sleepTime")
     }
