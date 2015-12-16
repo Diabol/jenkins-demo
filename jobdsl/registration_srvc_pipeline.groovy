@@ -1,3 +1,6 @@
+def scmUrl = 'https://github.com/Diabol/jenkins-demo.git'
+def sleepTime = 3
+
 folder('Registration')
 
 deliveryPipelineView('Registration/Pipeline') {
@@ -19,7 +22,7 @@ job('Registration/Build') {
     scm {
         git {
             remote {
-                url('https://github.com/Diabol/dummy.git')
+                url(scmUrl)
             }
         }
     }
@@ -47,7 +50,7 @@ job('Registration/Package') {
     scm {
         git {
             remote {
-                url('https://github.com/Diabol/dummy.git')
+                url(scmUrl)
             }
         }
     }
@@ -57,9 +60,7 @@ job('Registration/Package') {
     }
 
     steps {
-        shell(
-                'sleep 10'
-        )
+        shell("sleep $sleepTime")
     }
 
     publishers {
@@ -77,7 +78,7 @@ job('Registration/Sonar') {
     scm {
         git {
             remote {
-                url('https://github.com/Diabol/dummy.git')
+                url(scmUrl)
             }
         }
     }
@@ -87,9 +88,7 @@ job('Registration/Sonar') {
     }
 
     steps {
-        shell(
-                'sleep 10'
-        )
+        shell("sleep $sleepTime")
     }
 }
 
@@ -101,9 +100,7 @@ job('Registration/DeployCI') {
     }
 
     steps {
-        shell(
-                'sleep 5'
-        )
+        shell("sleep $sleepTime")
     }
 
     publishers {
@@ -124,9 +121,7 @@ job('Registration/Test1CI') {
     }
 
     steps {
-        shell(
-                'sleep 10'
-        )
+        shell("sleep $sleepTime")
     }
 
 
@@ -148,9 +143,7 @@ job('Registration/Test2CI') {
     }
 
     steps {
-        shell(
-                'sleep 10'
-        )
+        shell("sleep $sleepTime")
     }
 
     publishers {
@@ -171,9 +164,7 @@ job('Registration/Test3CI') {
     }
 
     steps {
-        shell(
-                'sleep 10'
-        )
+        shell("sleep $sleepTime")
     }
 
     publishers {
@@ -190,9 +181,7 @@ job('Registration/DeployQA') {
     }
 
     steps {
-        shell(
-                'sleep 5'
-        )
+        shell("sleep $sleepTime")
     }
 
     publishers {
@@ -217,9 +206,7 @@ job('Registration/TestQA') {
     }
 
     steps {
-        shell(
-                'sleep 10'
-        )
+        shell("sleep $sleepTime")
     }
 
 
@@ -237,9 +224,7 @@ job('Registration/TestPerformanceQA') {
     }
 
     steps {
-        shell(
-                'sleep 20'
-        )
+        shell("sleep $sleepTime")
     }
 }
 
@@ -251,9 +236,7 @@ job('Registration/GenerateReleaseNotes') {
     }
 
     steps {
-        shell(
-                'sleep 10'
-        )
+        shell("sleep $sleepTime")
     }
 }
 
@@ -265,9 +248,7 @@ job('Registration/DeployProd') {
     }
 
     steps {
-        shell(
-                'sleep 5'
-        )
+        shell("sleep $sleepTime")
     }
 
     publishers {
@@ -288,9 +269,7 @@ job('Registration/TestProd') {
     }
 
     steps {
-        shell(
-                'sleep 5'
-        )
+        shell("sleep $sleepTime")
     }
 
     publishers {
@@ -311,8 +290,6 @@ job('Registration/PublishReleaseNotes') {
     }
 
     steps {
-        shell(
-                'sleep 10'
-        )
+        shell("sleep $sleepTime")
     }
 }
