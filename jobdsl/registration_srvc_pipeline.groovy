@@ -2,9 +2,12 @@ folder('Registration')
 
 deliveryPipelineView('Registration/Pipeline') {
 
+    showAggregatedPipeline()
     pipelineInstances(5)
     enableManualTriggers()
+    sorting(Sorting.TITLE)
     showChangeLog()
+    showAvatars()
     pipelines {
         component('Component', 'Registration/Build')
     }
@@ -144,12 +147,12 @@ job('Registration/TestQA') {
     publishers {
         buildPipelineTrigger('Registration/DeployProd') {
         }
-        buildPipelineTrigger('Registration/TestPerfromanceQA') {
+        buildPipelineTrigger('Registration/TestPerformanceQA') {
         }
     }
 }
 
-job('Registration/TestPerfromanceQA') {
+job('Registration/TestPerformanceQA') {
     deliveryPipelineConfiguration("Acceptance", "Performance test")
 
     wrappers {
