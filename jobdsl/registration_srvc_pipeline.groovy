@@ -1,5 +1,5 @@
 def scmUrl = 'https://github.com/Diabol/jenkins-demo.git'
-def sleepTime = 3
+def sleepTime = 4
 
 folder('Registration')
 
@@ -232,7 +232,7 @@ job('Registration/TestPerformanceQA') {
         buildName('\$PIPELINE_VERSION')
     }
     steps {
-        shell("sleep $sleepTime")
+        shell("sleep ${sleepTime*4}")
     }
 }
 
