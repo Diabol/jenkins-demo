@@ -97,7 +97,7 @@ job('Registration/Sonar') {
     }
 
     steps {
-        shell("sleep $sleepTime")
+        shell("sleep ${sleepTime*4}")
     }
 }
 
