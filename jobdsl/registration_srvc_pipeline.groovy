@@ -4,7 +4,6 @@ def sleepTime = 4
 folder('Registration')
 
 deliveryPipelineView('Registration/Pipeline') {
-
     //showAggregatedPipeline()
     pipelineInstances(5)
     enableManualTriggers()
@@ -12,9 +11,8 @@ deliveryPipelineView('Registration/Pipeline') {
     showChangeLog()
     showAvatars()
     pipelines {
-        component('Component', 'Registration/Build')
+        component('Registration Service', 'Registration/Build')
     }
-
 }
 
 job('Registration/Build') {
